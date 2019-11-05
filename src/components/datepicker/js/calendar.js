@@ -11,6 +11,7 @@
    * @param {Date=} md-max-date Expression representing the maximum date.
    * @param {(function(Date): boolean)=} md-date-filter Function expecting a date and returning a
    *  boolean whether it can be selected or not.
+   * @param {boolean=} md-autofocus Whether to autofocus on the calendar or not. Defaults to `false`.
    * @param {String=} md-current-view Current view of the calendar. Can be either "month" or "year".
    * @param {String=} md-mode Restricts the user to only selecting a value from a particular view.
    *  This option can be used if the user is only supposed to choose from a certain date type
@@ -64,6 +65,7 @@
         minDate: '=mdMinDate',
         maxDate: '=mdMaxDate',
         dateFilter: '=mdDateFilter',
+        autofocus: '=mdAutofocus',
 
         // These need to be prefixed, because Angular resets
         // any changes to the value due to bindToController.
@@ -268,6 +270,10 @@
     } else {
       this.lastRenderableDate = dateLocale.lastRenderableDate;
     }
+
+    if (this.autofocus) {
+      this.focus();
+    }
   };
 
   /**
@@ -307,7 +313,9 @@
    */
   CalendarCtrl.prototype.setNgModelValue = function(date) {
     var value = this.dateUtil.createDateAtMidnight(date);
-    this.focus(value);
+    if (this.autofocus) {
+      this.focus(value);
+    }
     this.$scope.$emit('md-calendar-change', value);
     this.ngModelCtrl.$setViewValue(value);
     this.ngModelCtrl.$render();
